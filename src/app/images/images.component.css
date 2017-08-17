@@ -1,5 +1,10 @@
 img{
    display:block;
+   margin: auto;
   /* width:10%;
   height: 10%;  */
+}
+.imgContainer{
+  display: inline-block;
+  align-content: center;
 }

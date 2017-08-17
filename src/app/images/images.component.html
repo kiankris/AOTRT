@@ -1,6 +1,15 @@
-<div>Images should be below me</div>
-<div class="row">
-  <div *ngFor="let ir of imageURLs" class="imgContainer">
-    <img class="row" [src]="ir">
+<input [(ngModel)]="word" placeholder="selectedLetter" pattern="^[a-z]$" limit='1' />
+<input type="text" [(ngModel)]="letters[0]" placeholder="Enter text here" (keyup)="eval(1, 3)">
+<input type="text" [(ngModel)]="letters[1]" placeholder="Enter text here" (keyup)="eval(2, 6)">
+<input type="text" [(ngModel)]="letters[2]" placeholder="Enter text here" (keyup)="eval(3, 9)">
+<input type="text" [(ngModel)]="letters[3]" placeholder="Enter text here" (keyup)="eval(4, 12)">
+<div *ngIf="answer != null">
+  <div *ngFor="let letter of answer">
+    {{letter}}
   </div>
 </div>
+<!-- <div *ngFor="let row of imageURLs">
+  <div *ngFor="let ir of row" class="imgContainer">
+    <img class="row" [src]="ir">
+  </div>
+</div> -->
