@@ -1,4 +1,14 @@
-<h1>
-  {{title}}
-</h1>
-<app-images></app-images>
+<p>
+  Enter your word in the text box and click on the select symbol buttons and click on the your symbol in the order that they
+  appear from Slappy Taffy towards the ice cream shop.
+</p>
+<input type="text" [(ngModel)]="word" (keypress)="evalWord($event)">
+<div *ngIf="answer.length > 0">
+  <div *ngFor="let row of answer">
+    {{row}}
+  </div>
+</div>
+<app-images (letter)="setLetter($event, 1)"></app-images>
+<app-images (letter)="setLetter($event, 2)"></app-images>
+<app-images (letter)="setLetter($event, 3)"></app-images>
+<app-images (letter)="setLetter($event, 4)"></app-images>
