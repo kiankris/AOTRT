@@ -50,8 +50,8 @@ export class AppComponent {
 
     for (let row of this.finalValues) {
       if (row != null && row.length > 0) {
-        answers[row[0] - 1] = String.fromCharCode(row[0] + 65);
-        this.helpers(answers, 1, row[0], String(row[0]), String.fromCharCode(row[0] + 65));
+        answers[row[0] - 1] = String.fromCharCode(row[0] + 64);
+        this.helpers(answers, 1, row[0], String(row[0]), String.fromCharCode(row[0] + 64));
       }
     }
     return answers;
@@ -62,7 +62,7 @@ export class AppComponent {
         if (row.length > 0) {
           let newVal = (val + row[col] - 1) % 26;
           let newStr = str + " + " + row[col];
-          let newCombo = combo + " + " + String.fromCharCode(row[0] + 65);
+          let newCombo = combo + " + " + String.fromCharCode(row[0] + 64);
           console.log("newVal:", newVal);
           if (typeof arr[newVal] === "number" || arr[newVal].length > newStr.length) {
             arr[newVal] = newCombo;
