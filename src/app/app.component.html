@@ -3,8 +3,10 @@
   appear from Slappy Taffy towards the ice cream shop.
 </p>
 <input type="text" [(ngModel)]="word" (keypress)="evalWord($event)">
-<div *ngFor="let row of answer">
-  {{row}}
+<div *ngIf="answerAvailable">
+  <div *ngFor="let row of answer">
+    {{row}}
+  </div>
 </div>
 <app-images (letter)="setLetter($event, 1)"></app-images>
 <app-images (letter)="setLetter($event, 2)"></app-images>

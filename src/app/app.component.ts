@@ -6,12 +6,12 @@ import { Component, Input } from '@angular/core';
 })
 export class AppComponent {
   title = 'Will we get anything displayed';
-  letterValue = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
+  map = ['NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY']
   @Input() word: string = "";
   finalValues: any[] = [[], [], [], []];
   letters: string[] = ["", "", "", ""];
-  map: string[];
   answer: string[] = [];
+  answerAvailable = true;
 
   public position(num: number): number {
     return num;
@@ -45,7 +45,7 @@ export class AppComponent {
   determineFinalValues() {
     let answers = [];
     for (let i = 0; i < 26; i++) {
-      answers.push(-1);
+      answers.push("NOTREADY");
     }
 
     for (let row of this.finalValues) {
