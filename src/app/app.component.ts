@@ -5,68 +5,99 @@ import { Component, Input } from '@angular/core';
   templateUrl: './app.component.html',
 })
 export class AppComponent {
-  title = 'Will we get anything displayed';
   map = ['NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY', 'NOTREADY']
   @Input() word: string = "";
   finalValues: any[] = [[], [], [], []];
   letters: string[] = ["", "", "", ""];
   answer: string[] = [];
   answerAvailable = true;
+  shift = 64;
 
-  public position(num: number): number {
-    return num;
+  public test() {
+    this.eval("R", 1, 3);
+    this.eval("Q", 2, 6);
+    this.eval("V", 3, 9);
+    this.eval("Z", 4, 12);
   }
-
   public setLetter(letter: string, position: number) {
     this.letters[position - 1] = letter;
-    console.log("Parent has selected letter: " + letter, "at position", position)
-    console.log(this.letters)
-    this.eval(position, position * 3);
+    // console.log("Parent has selected letter: " + letter, "at position", position, this.letters);
+    this.eval(letter, position, position * 3);
   }
 
-  eval(position, c) {
+  eval(letter, position, c) {
+    this.finalValues[position - 1] = [];
     let arr = this.finalValues[position - 1];
-    let letter = this.letters[position - 1];
-    console.log("The letter is: " + letter)
-    if (letter == null || letter.length == 0) {
-      return
-    }
-    while (arr.length > 0) {
-      arr.pop()
-    }
+
+    let letterNumber = Number(letter.charCodeAt(0) - this.shift);
+    // let str =
+    // console.log("letterNumber:", letterNumber, String.fromCharCode(letterNumber + this.shift));
     for (let i = 0; i < 4; i++) {
-      arr.push(Number(letter.charCodeAt(0) - 64) + (c * i))
+      let calc = letterNumber + (c * i) + this.shift;
+      let calcLetter = String.fromCharCode(letterNumber + (c * i) + this.shift);
+      if (calc - this.shift > 25) {
+        // console.log("Exceeded applicable value:", letterNumber + (c * i), "=", calc - this.shift, (calc - this.shift) % 26)
+        calc = (calc - this.shift) % 26
+        // console.log("Calculated:", calc);
+        calcLetter = String.fromCharCode(calc + this.shift);
+      }
+      arr.push(letterNumber + (c * i));
     }
+    // console.log(arr);
 
     this.map = this.determineFinalValues();
-    console.log(this.map);
+    // console.log(this.map);
     this.populateAnswer();
   }
+
   determineFinalValues() {
-    let answers = [];
+    let possibleAnswers = [];
     for (let i = 0; i < 26; i++) {
-      answers.push("NOTREADY");
+      possibleAnswers.push("NOTREADY");
     }
+    // console.log("Calculating possible answers");
 
     for (let row of this.finalValues) {
       if (row != null && row.length > 0) {
-        answers[row[0] - 1] = String.fromCharCode(row[0] + 64);
-        this.helpers(answers, 1, row[0], String(row[0]), String.fromCharCode(row[0] + 64));
+        possibleAnswers[row[0] - 1] = String.fromCharCode(row[0] + this.shift);
+        this.helpers(possibleAnswers, 1, row[0], String(row[0]), String.fromCharCode(row[0] + this.shift));
       }
     }
-    return answers;
+    return possibleAnswers;
   }
+
+  convertNumbersToLetters(arr) {
+    let str = "";
+    let sum = 0;
+    let i = 0;
+    for (let x of arr) {
+      str += String.fromCharCode(this.calculateSum(sum, x) + this.shift) + " "
+      sum += x
+      // console.log("Sum is", sum, "for", str);
+    }
+    return str
+  }
+
+  calculateSum(currentVal, newVal): number {
+    let result = (currentVal + newVal) % 26;
+    if (result == 0) {
+      return 26;
+    }
+    return result;
+  }
+
   helpers(arr, col, val, str, combo) {
     if (col < 4) {
       for (let row of this.finalValues) {
         if (row.length > 0) {
-          let newVal = (val + row[col] - 1) % 26;
+          let newVal = this.calculateSum(val, row[col]);
           let newStr = str + " + " + row[col];
-          let newCombo = combo + " + " + String.fromCharCode(row[0] + 64);
-          console.log("newVal:", newVal);
-          if (typeof arr[newVal] === "number" || arr[newVal].length > newStr.length) {
-            arr[newVal] = newCombo;
-            console.log(newStr, "=", val + row[col]);
+          let newCombo = combo + " + " + String.fromCharCode(row[0] + this.shift);
+          // console.log("Current Combo:", newCombo, newStr, newVal, val + row[col]);
+          // console.log("newVal:", newVal);
+          if (arr[newVal - 1] == "NOTREADY" || arr[newVal - 1].length > newStr.length) {
+            arr[newVal - 1] = newCombo;
+            // console.log(newVal - 1, "has been set to", newCombo);
           }
           this.helpers(arr, col + 1, val + row[col], newStr, newCombo);
         }
@@ -74,26 +105,29 @@ export class AppComponent {
     }
   }
   populateAnswer() {
-    console.log("Populate answer: " + this.word)
-    if (this.word !== null || this.word.length > 0) {
-      let word = this.word.toUpperCase();
-      this.answer = [];
-      if (this.map != null) {
-        for (let c of word) {
-          this.answer.push(c + " : " + this.map[c.charCodeAt(0) - 65]);
-        }
-      }
+    this.answer = []
+    let word = this.word.toUpperCase();
+    for (let c of word) {
+      let position = c.charCodeAt(0) - (this.shift + 1)
+      if (this.map[position] != "NOTREADY")
+        this.answer.push(c + " : " + this.map[position]);
     }
   }
 
-  evalWord(event: any) {
-    const pattern = /^[a-zA-Z]$/;
-    let inputChar = String.fromCharCode(event.charCode);
-    if (!pattern.test(inputChar)) {
-      event.preventDefault();
-    }
-    else {
+  evalWord() {
+    const pattern = /^[a-zA-Z]+$/;
+    // console.log(this.word, pattern.test(this.word))
+    if (this.word.length == 0) {
       this.populateAnswer();
     }
+    else if (pattern.test(this.word)) {
+      // console.log("Word is:", this.word, ":", this.word.length, "action was allowed")
+      this.populateAnswer();
+    }
+    else {
+      // console.log("Word is:", this.word, ":", this.word.length, "action was prevented")
+      this.word = this.word.substring(0, this.word.length - 1)
+    }
+
   }
 }
